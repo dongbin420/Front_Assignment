@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import GlobalStyle from '@/styles/GlobalStyle';
 import App from './App';
@@ -9,5 +8,5 @@ root.render(
   <>
     <GlobalStyle />
     <App />
-  </>
+  </>,
 );
