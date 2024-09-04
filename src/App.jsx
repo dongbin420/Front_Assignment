@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from "react";
-import ReactDOM from "react-dom";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useState, useCallback } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function App() {
   const getItems = (count) =>
@@ -24,11 +23,7 @@ function App() {
         return;
       }
 
-      const newItems = reorder(
-        items,
-        result.source.index,
-        result.destination.index
-      );
+      const newItems = reorder(items, result.source.index, result.destination.index);
 
       setItems(newItems);
     },
@@ -51,10 +46,7 @@ function App() {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    style={getItemStyle(
-                      snapshot.isDragging,
-                      provided.draggableProps.style
-                    )}
+                    style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                   >
                     {item.content}
                   </div>
@@ -72,17 +64,17 @@ function App() {
 const GRID = 8;
 
 const getItemStyle = (isDragging, draggableStyle) => ({
-  userSelect: "none",
+  userSelect: 'none',
   padding: GRID * 2,
   margin: `0 0 ${GRID}px 0`,
-  background: isDragging ? "lightgreen" : "grey",
+  background: isDragging ? 'lightgreen' : 'grey',
   ...draggableStyle,
 });
 
 const getListStyle = (isDraggingOver) => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
+  background: isDraggingOver ? 'lightblue' : 'lightgrey',
   padding: GRID,
   width: 250,
 });
 
-ReactDOM.render(<App />, document.getElementById("root"));
+export default App;
