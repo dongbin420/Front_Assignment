@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { getDndData, reorderSameColumn, reorderDifferentColumn } from '@/utils/dndUtils';
 
 export const useDnd = (initialItems, initialColumns) => {
+  const initialDnd = getDndData(initialItems, initialColumns);
   const [dndData, setDndData] = useState(getDndData(initialItems, initialColumns));
 
   const onDragEnd = useCallback(
@@ -52,5 +53,9 @@ export const useDnd = (initialItems, initialColumns) => {
     [dndData],
   );
 
-  return { dndData, onDragEnd };
+  const resetBoard = useCallback(() => {
+    setDndData(initialDnd);
+  }, [initialDnd]);
+
+  return { dndData, onDragEnd, resetBoard };
 };

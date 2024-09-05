@@ -4,11 +4,12 @@ import DroppableWrapper from './DroppableWrapper/DroppableWrapper';
 import { useDndContext } from '@/hooks/useDndContext';
 
 function DragAndDrop() {
-  const { dndData, onDragEnd } = useDndContext();
+  const { dndData, onDragEnd, resetBoard } = useDndContext();
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <S.DragAndDropTitle>Drag and Drop</S.DragAndDropTitle>
+      <S.ResetButton onClick={resetBoard}>Reset</S.ResetButton>
       <S.DragAndDropContainer>
         {dndData.columnOrder.map((columnId) => {
           const columnData = dndData.columns[columnId];

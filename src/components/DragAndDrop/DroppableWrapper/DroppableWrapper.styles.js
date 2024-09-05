@@ -17,5 +17,5 @@ export const Column = styled.div`
   background-color: ${(props) => (props.$isDraggingOver ? 'lightblue' : 'lightgrey')};
   padding: 8px;
   flex-grow: 1;
-  min-height: 700px;
+  min-height: 600px;
 `;
