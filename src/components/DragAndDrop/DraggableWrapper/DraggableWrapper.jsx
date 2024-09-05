@@ -1,18 +1,18 @@
+import * as S from './DraggableWrapper.styles';
 import { Draggable } from 'react-beautiful-dnd';
-import { getItemStyle } from '@/utils/dndUtils';
 
 function DraggableWrapper({ draggableId, index, item }) {
   return (
     <Draggable draggableId={draggableId} index={index}>
       {(provided, snapshot) => (
-        <div
+        <S.Item
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+          isDragging={snapshot.isDragging}
         >
           {item.content}
-        </div>
+        </S.Item>
       )}
     </Draggable>
   );
