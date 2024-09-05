@@ -1,26 +1,26 @@
 import * as S from './DroppableWrapper.styles';
 import { Droppable } from 'react-beautiful-dnd';
 import DraggableWrapper from '@/components/DragAndDrop/DraggableWrapper/DraggableWrapper';
-import { useDndContext } from '@/hooks/useDndContext';
 
-function DroppableWrapper() {
-  const { items } = useDndContext();
-
+function DroppableWrapper({ columnData, itemsData }) {
   return (
-    <Droppable droppableId="droppable">
-      {(provided, snapshot) => (
-        <S.List
-          {...provided.droppableProps}
-          ref={provided.innerRef}
-          isDraggingOver={snapshot.isDraggingOver}
-        >
-          {items.map((item, index) => (
-            <DraggableWrapper key={item.id} draggableId={item.id} index={index} item={item} />
-          ))}
-          {provided.placeholder}
-        </S.List>
-      )}
-    </Droppable>
+    <S.ColumnContainer>
+      <S.ColumnTitle>{columnData.title}</S.ColumnTitle>
+      <Droppable droppableId={columnData.id}>
+        {(provided, snapshot) => (
+          <S.Column
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            $isDraggingOver={snapshot.isDraggingOver} // styled-components props가 dom으로 전달되지 않음
+          >
+            {itemsData.map((item, idx) => (
+              <DraggableWrapper key={item.id} itemData={item} idx={idx} />
+            ))}
+            {provided.placeholder}
+          </S.Column>
+        )}
+      </Droppable>
+    </S.ColumnContainer>
   );
 }
 
