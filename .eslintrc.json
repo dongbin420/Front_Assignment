@@ -21,6 +21,7 @@
   "plugins": ["react", "react-hooks"],
   "rules": {
     "no-unused-vars": "warn",
+    "react/prop-types": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn" // 좀 더 강력한 lint by eslint-plugin-react-hooks
   }
