@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   devServer: {
@@ -7,6 +8,7 @@ module.exports = {
     port: 3000,
     compress: true,
   },
+  devtool: isProduction ? 'hidden-source-map' : 'eval-source-map',
   entry: './src/index.jsx',
   output: {
     filename: 'bundle.js',

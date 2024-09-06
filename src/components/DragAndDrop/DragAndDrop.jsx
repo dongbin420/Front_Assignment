@@ -4,10 +4,10 @@ import DroppableWrapper from './DroppableWrapper/DroppableWrapper';
 import { useDndContext } from '@/hooks/useDndContext';
 
 function DragAndDrop() {
-  const { dndData, onDragEnd, resetBoard } = useDndContext();
+  const { dndData, onDragUpdate, onDragEnd, resetBoard } = useDndContext();
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragUpdate={onDragUpdate} onDragEnd={onDragEnd}>
       <S.DragAndDropTitle>Drag and Drop</S.DragAndDropTitle>
       <S.ResetButton onClick={resetBoard}>Reset</S.ResetButton>
       <S.DragAndDropContainer>

@@ -14,7 +14,8 @@ export const ColumnTitle = styled.div`
 `;
 
 export const Column = styled.div`
-  background-color: ${(props) => (props.$isDraggingOver ? 'lightblue' : 'lightgrey')};
+  background-color: ${(props) =>
+    props.$isInvalidDrop ? 'lightgrey' : props.$isDraggingOver ? 'lightblue' : 'lightgrey'};
   padding: 8px;
   flex-grow: 1;
   min-height: 600px;

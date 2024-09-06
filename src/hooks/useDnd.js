@@ -4,9 +4,33 @@ import { getDndData, reorderSameColumn, reorderDifferentColumn } from '@/utils/d
 export const useDnd = (initialItems, initialColumns) => {
   const initialDnd = getDndData(initialItems, initialColumns);
   const [dndData, setDndData] = useState(getDndData(initialItems, initialColumns));
+  const [invalidItem, setInvalidItem] = useState(null);
+
+  const onDragUpdate = useCallback(
+    (update) => {
+      const { destination, source, draggableId } = update;
+
+      if (!destination) {
+        setInvalidItem(null);
+
+        return;
+      }
+
+      const startColumnIdx = dndData.columnOrder.indexOf(source.droppableId);
+      const finishColumnIdx = dndData.columnOrder.indexOf(destination.droppableId);
+
+      if (finishColumnIdx === 2 && startColumnIdx === 0) {
+        setInvalidItem(draggableId);
+      } else {
+        setInvalidItem(null);
+      }
+    },
+    [dndData.columnOrder],
+  );
 
   const onDragEnd = useCallback(
     (result) => {
+      setInvalidItem(null);
       const { destination, source } = result;
 
       if (!destination) {
@@ -14,6 +38,10 @@ export const useDnd = (initialItems, initialColumns) => {
       }
 
       if (destination.droppableId === source.droppableId && destination.index === source.index) {
+        return;
+      }
+
+      if (source.droppableId === 'column-1' && destination.droppableId === 'column-3') {
         return;
       }
 
@@ -50,12 +78,12 @@ export const useDnd = (initialItems, initialColumns) => {
         },
       }));
     },
-    [dndData],
+    [dndData.columns],
   );
 
   const resetBoard = useCallback(() => {
     setDndData(initialDnd);
   }, [initialDnd]);
 
-  return { dndData, onDragEnd, resetBoard };
+  return { dndData, invalidItem, onDragUpdate, onDragEnd, resetBoard };
 };
