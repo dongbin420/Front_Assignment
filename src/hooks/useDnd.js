@@ -33,9 +33,7 @@ export const useDnd = (initialItems, initialColumns) => {
       setInvalidItem(null);
       const { destination, source } = result;
 
-      if (!destination) {
-        return;
-      }
+      if (!destination) return;
 
       if (destination.droppableId === source.droppableId && destination.index === source.index) {
         return;
