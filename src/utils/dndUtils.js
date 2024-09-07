@@ -68,3 +68,74 @@ export const reorderDifferentColumn = (startColumn, finishColumn, startIndex, fi
 
   return { newStartColumn, newFinishColumn };
 };
+
+export const multiReorderSameColumn = (column, selectedItems, finishIndex, startIndex) => {
+  const newItemIds = Array.from(column.itemIds);
+  const sortedSelectedItems = selectedItems
+    .map((itemId) => ({ id: itemId, idx: newItemIds.indexOf(itemId) }))
+    .sort((a, b) => a.idx - b.idx);
+
+  sortedSelectedItems.forEach((item) => {
+    const idx = newItemIds.indexOf(item.id);
+
+    if (idx > -1) {
+      newItemIds.splice(idx, 1);
+    }
+  });
+
+  let adjustedFinishIndex = finishIndex;
+
+  sortedSelectedItems.forEach((item) => {
+    if (item.idx <= finishIndex) {
+      adjustedFinishIndex -= 1;
+    }
+  });
+
+  if (!(startIndex > finishIndex)) {
+    adjustedFinishIndex += 1;
+  }
+
+  newItemIds.splice(adjustedFinishIndex, 0, ...sortedSelectedItems.map((item) => item.id));
+
+  const newColumn = {
+    ...column,
+    itemIds: newItemIds,
+  };
+
+  return newColumn;
+};
+
+export const multiReorderDifferentColumn = (
+  startColumn,
+  finishColumn,
+  selectedItems,
+  finishIndex,
+) => {
+  const startColumnItemIds = Array.from(startColumn.itemIds);
+  const sortedSelectedItems = selectedItems
+    .map((itemId) => ({ id: itemId, idx: startColumnItemIds.indexOf(itemId) }))
+    .sort((a, b) => a.idx - b.idx);
+
+  sortedSelectedItems.forEach((item) => {
+    const idx = startColumnItemIds.indexOf(item.id);
+
+    if (idx > -1) {
+      startColumnItemIds.splice(idx, 1);
+    }
+  });
+
+  const newStartColumn = {
+    ...startColumn,
+    itemIds: startColumnItemIds,
+  };
+
+  const finishColumnItemIds = Array.from(finishColumn.itemIds);
+  finishColumnItemIds.splice(finishIndex, 0, ...sortedSelectedItems.map((item) => item.id));
+
+  const newFinishColumn = {
+    ...finishColumn,
+    itemIds: finishColumnItemIds,
+  };
+
+  return { newStartColumn, newFinishColumn };
+};

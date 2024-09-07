@@ -19,7 +19,7 @@ function DroppableWrapper({ columnData, itemsData }) {
             $isInvalidDrop={isThirdColumn && invalidItem !== null}
           >
             {itemsData.map((item, idx) => (
-              <DraggableWrapper key={item.id} itemData={item} idx={idx} />
+              <DraggableWrapper key={item.id} itemData={item} idx={idx} columnId={columnData.id} />
             ))}
             {provided.placeholder}
           </S.Column>

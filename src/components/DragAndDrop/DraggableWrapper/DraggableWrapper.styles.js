@@ -5,5 +5,11 @@ export const Item = styled.div`
   padding: 16px; // GRID * 2
   margin: 0 0 8px 0; // GRID
   background-color: ${(props) =>
-    props.$isDraggingOverThird ? 'red' : props.$isDragging ? 'lightgreen' : 'grey'};
+    props.$isDraggingOverThird
+      ? 'red'
+      : props.$isSelected
+        ? '#ffd700'
+        : props.$isDragging
+          ? 'lightgreen'
+          : 'grey'};
 `;
