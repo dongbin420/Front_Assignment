@@ -75,9 +75,65 @@ export const useDnd = (initialItems, initialColumns) => {
 
       if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
         if (startColumn === finishColumn) {
+          const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
+
+          for (let group of adjacentGroups) {
+            const minIndex = group[0];
+            const maxIndex = group[group.length - 1];
+            if (destination.index >= minIndex && destination.index <= maxIndex) {
+              isIntercept = true;
+            }
+          }
+
           // 다중 드래그에서, 같은 컬럼일 때, 짝수 확인 로직
+          const newItemIds = Array.from(startColumn.itemIds);
+          const sortedSelectedItems = selectedItems
+            .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
+            .sort((a, b) => a.idx - b.idx);
+
+          sortedSelectedItems.forEach((item) => {
+            const idx = newItemIds.indexOf(item.id);
+
+            if (idx > -1) {
+              newItemIds.splice(idx, 1);
+            }
+          });
+
+          let adjustedFinishIndex = destination.index;
+
+          sortedSelectedItems.forEach((item) => {
+            if (item.idx < destination.index) {
+              adjustedFinishIndex -= 1;
+            }
+          });
+
+          if (source.index < destination.index) {
+            adjustedFinishIndex += 1;
+          }
+
+          const lastItemNum = Number(
+            sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1],
+          );
+          const targetIdxNum = Number(newItemIds[adjustedFinishIndex]?.split('-')[1]);
+
+          if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+            isInFrontEven = true;
+          }
         } else {
           // 다중 드래그에서, 다른 컬럼일 때, 짝수 확인 로직
+          const newItemIds = Array.from(startColumn.itemIds);
+          const sortedSelectedItems = selectedItems
+            .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
+            .sort((a, b) => a.idx - b.idx);
+
+          const lastItemNum = Number(
+            sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1],
+          );
+          const targetIdxNum = Number(finishColumn.itemIds[destination.index]?.split('-')[1]);
+
+          if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+            isInFrontEven = true;
+          }
         }
       } else {
         if (finishColumnIdx === startColumnIdx) {
@@ -90,16 +146,6 @@ export const useDnd = (initialItems, initialColumns) => {
             Number(nextItem?.split('-')[1]) % 2 === 0
           ) {
             isInFrontEven = true;
-          }
-
-          const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
-
-          for (let group of adjacentGroups) {
-            const minIndex = group[0];
-            const maxIndex = group[group.length - 1];
-            if (destination.index >= minIndex && destination.index <= maxIndex) {
-              isIntercept = true;
-            }
           }
         } else {
           if (
@@ -142,6 +188,39 @@ export const useDnd = (initialItems, initialColumns) => {
       if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
         if (startColumn === finishColumn) {
           // 다중 드래그에서, 같은 컬럼일 때, 짝수 확인 로직 들어갈 자리
+          const newItemIds = Array.from(startColumn.itemIds);
+          const sortedSelectedItems = selectedItems
+            .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
+            .sort((a, b) => a.idx - b.idx);
+
+          sortedSelectedItems.forEach((item) => {
+            const idx = newItemIds.indexOf(item.id);
+
+            if (idx > -1) {
+              newItemIds.splice(idx, 1);
+            }
+          });
+
+          let adjustedFinishIndex = destination.index;
+
+          sortedSelectedItems.forEach((item) => {
+            if (item.idx < destination.index) {
+              adjustedFinishIndex -= 1;
+            }
+          });
+
+          if (source.index < destination.index) {
+            adjustedFinishIndex += 1;
+          }
+
+          const lastItemNum = Number(
+            sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1],
+          );
+          const targetIdxNum = Number(newItemIds[adjustedFinishIndex]?.split('-')[1]);
+
+          if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+            return;
+          }
 
           const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
 
@@ -169,6 +248,19 @@ export const useDnd = (initialItems, initialColumns) => {
           }));
         } else {
           // 다중 드래그에서, 다른 컬럼일 때, 짝수 확인 로직 들어갈 자리
+          const newItemIds = Array.from(startColumn.itemIds);
+          const sortedSelectedItems = selectedItems
+            .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
+            .sort((a, b) => a.idx - b.idx);
+
+          const lastItemNum = Number(
+            sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1],
+          );
+          const targetIdxNum = Number(finishColumn.itemIds[destination.index]?.split('-')[1]);
+
+          if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+            return;
+          }
 
           const { newStartColumn, newFinishColumn } = multiReorderDifferentColumn(
             startColumn,
