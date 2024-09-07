@@ -68,24 +68,53 @@ export const useDnd = (initialItems, initialColumns) => {
       const startColumnIdx = dndData.columnOrder.indexOf(source.droppableId);
       const finishColumnIdx = dndData.columnOrder.indexOf(destination.droppableId);
       const startColumn = dndData.columns[source.droppableId];
+      const finishColumn = dndData.columns[destination.droppableId];
       const itemIds = startColumn.itemIds;
       let isIntercept = false;
+      let isInFrontEven = false;
 
-      if (finishColumnIdx === startColumnIdx) {
-        const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
+      if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
+        if (startColumn === finishColumn) {
+          // 다중 드래그에서, 같은 컬럼일 때, 짝수 확인 로직
+        } else {
+          // 다중 드래그에서, 다른 컬럼일 때, 짝수 확인 로직
+        }
+      } else {
+        if (finishColumnIdx === startColumnIdx) {
+          const columnWithoutDraggedItem = Array.from(startColumn.itemIds);
+          columnWithoutDraggedItem.splice(source.index, 1);
+          const nextItem = columnWithoutDraggedItem[destination.index];
 
-        for (let group of adjacentGroups) {
-          const minIndex = group[0];
-          const maxIndex = group[group.length - 1];
-          if (destination.index >= minIndex && destination.index <= maxIndex) {
-            isIntercept = true;
+          if (
+            Number(draggableId.split('-')[1]) % 2 === 0 &&
+            Number(nextItem?.split('-')[1]) % 2 === 0
+          ) {
+            isInFrontEven = true;
+          }
+
+          const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
+
+          for (let group of adjacentGroups) {
+            const minIndex = group[0];
+            const maxIndex = group[group.length - 1];
+            if (destination.index >= minIndex && destination.index <= maxIndex) {
+              isIntercept = true;
+            }
+          }
+        } else {
+          if (
+            Number(draggableId.split('-')[1]) % 2 === 0 &&
+            Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0
+          ) {
+            isInFrontEven = true;
           }
         }
       }
 
       if (
         (finishColumnIdx === 2 && startColumnIdx === 0) ||
-        (isIntercept && selectedItems.map((item) => item.id).includes(draggableId))
+        (isIntercept && selectedItems.map((item) => item.id).includes(draggableId)) ||
+        isInFrontEven
       ) {
         setInvalidItem(draggableId);
       } else {
@@ -112,6 +141,8 @@ export const useDnd = (initialItems, initialColumns) => {
 
       if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
         if (startColumn === finishColumn) {
+          // 다중 드래그에서, 같은 컬럼일 때, 짝수 확인 로직 들어갈 자리
+
           const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
 
           for (let group of adjacentGroups) {
@@ -137,6 +168,8 @@ export const useDnd = (initialItems, initialColumns) => {
             },
           }));
         } else {
+          // 다중 드래그에서, 다른 컬럼일 때, 짝수 확인 로직 들어갈 자리
+
           const { newStartColumn, newFinishColumn } = multiReorderDifferentColumn(
             startColumn,
             finishColumn,
@@ -157,6 +190,17 @@ export const useDnd = (initialItems, initialColumns) => {
         setSelectedItems([]);
       } else {
         if (startColumn === finishColumn) {
+          const columnWithoutDraggedItem = Array.from(startColumn.itemIds);
+          columnWithoutDraggedItem.splice(source.index, 1);
+          const nextItem = columnWithoutDraggedItem[destination.index];
+
+          if (
+            Number(draggableId.split('-')[1]) % 2 === 0 &&
+            Number(nextItem?.split('-')[1]) % 2 === 0
+          ) {
+            return;
+          }
+
           const newColumn = reorderSameColumn(startColumn, source.index, destination.index);
 
           setDndData((prevDatas) => ({
@@ -167,6 +211,13 @@ export const useDnd = (initialItems, initialColumns) => {
             },
           }));
 
+          return;
+        }
+
+        if (
+          Number(draggableId.split('-')[1]) % 2 === 0 &&
+          Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0
+        ) {
           return;
         }
 
