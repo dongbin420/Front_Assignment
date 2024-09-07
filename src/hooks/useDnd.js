@@ -83,7 +83,10 @@ export const useDnd = (initialItems, initialColumns) => {
         }
       }
 
-      if ((finishColumnIdx === 2 && startColumnIdx === 0) || isIntercept) {
+      if (
+        (finishColumnIdx === 2 && startColumnIdx === 0) ||
+        (isIntercept && selectedItems.map((item) => item.id).includes(draggableId))
+      ) {
         setInvalidItem(draggableId);
       } else {
         setInvalidItem(null);
