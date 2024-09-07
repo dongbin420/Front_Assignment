@@ -32,6 +32,29 @@ export const useDnd = (initialItems, initialColumns) => {
     [selectedItems],
   );
 
+  const findAdjacentGroups = (selectedItems, itemIds) => {
+    const indices = selectedItems.map((item) => itemIds.indexOf(item.id)).sort((a, b) => a - b);
+    let adjacentGroups = [];
+    let currentGroup = [indices[0]];
+
+    for (let i = 1; i < indices.length; i++) {
+      if (indices[i] === indices[i - 1] + 1) {
+        currentGroup.push(indices[i]);
+      } else {
+        if (currentGroup.length >= 2) {
+          adjacentGroups.push([...currentGroup]);
+        }
+        currentGroup = [indices[i]];
+      }
+    }
+
+    if (currentGroup.length >= 2) {
+      adjacentGroups.push([...currentGroup]);
+    }
+
+    return adjacentGroups;
+  };
+
   const onDragUpdate = useCallback(
     (update) => {
       const { destination, source, draggableId } = update;
@@ -44,14 +67,29 @@ export const useDnd = (initialItems, initialColumns) => {
 
       const startColumnIdx = dndData.columnOrder.indexOf(source.droppableId);
       const finishColumnIdx = dndData.columnOrder.indexOf(destination.droppableId);
+      const startColumn = dndData.columns[source.droppableId];
+      const itemIds = startColumn.itemIds;
+      let isIntercept = false;
 
-      if (finishColumnIdx === 2 && startColumnIdx === 0) {
+      if (finishColumnIdx === startColumnIdx) {
+        const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
+
+        for (let group of adjacentGroups) {
+          const minIndex = group[0];
+          const maxIndex = group[group.length - 1];
+          if (destination.index >= minIndex && destination.index <= maxIndex) {
+            isIntercept = true;
+          }
+        }
+      }
+
+      if ((finishColumnIdx === 2 && startColumnIdx === 0) || isIntercept) {
         setInvalidItem(draggableId);
       } else {
         setInvalidItem(null);
       }
     },
-    [dndData.columnOrder],
+    [dndData.columnOrder, dndData.columns, selectedItems],
   );
 
   const onDragEnd = useCallback(
@@ -67,9 +105,20 @@ export const useDnd = (initialItems, initialColumns) => {
 
       const startColumn = dndData.columns[source.droppableId];
       const finishColumn = dndData.columns[destination.droppableId];
+      const itemIds = startColumn.itemIds;
 
       if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
         if (startColumn === finishColumn) {
+          const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
+
+          for (let group of adjacentGroups) {
+            const minIndex = group[0];
+            const maxIndex = group[group.length - 1];
+            if (destination.index >= minIndex && destination.index <= maxIndex) {
+              return;
+            }
+          }
+
           const newColumn = multiReorderSameColumn(
             startColumn,
             selectedItems.map((item) => item.id),
@@ -140,6 +189,7 @@ export const useDnd = (initialItems, initialColumns) => {
 
   const resetBoard = useCallback(() => {
     setDndData(initialDnd);
+    setSelectedItems([]);
   }, [initialDnd]);
 
   return {

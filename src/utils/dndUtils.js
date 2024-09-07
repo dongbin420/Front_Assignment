@@ -86,12 +86,12 @@ export const multiReorderSameColumn = (column, selectedItems, finishIndex, start
   let adjustedFinishIndex = finishIndex;
 
   sortedSelectedItems.forEach((item) => {
-    if (item.idx <= finishIndex) {
+    if (item.idx < finishIndex) {
       adjustedFinishIndex -= 1;
     }
   });
 
-  if (!(startIndex > finishIndex)) {
+  if (startIndex < finishIndex) {
     adjustedFinishIndex += 1;
   }
 

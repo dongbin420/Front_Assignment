@@ -15,7 +15,7 @@ function DraggableWrapper({ itemData, idx, columnId }) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           $isDragging={snapshot.isDragging} // styled-components props가 dom으로 전달되지 않음
-          $isDraggingOverThird={invalidItem === itemData.id}
+          $isDraggingOverThird={invalidItem === itemData.id || (invalidItem && isSelected)}
           $isSelected={isSelected}
         >
           {itemData.content}
