@@ -15,12 +15,12 @@ export const ColumnContainer = styled.div`
   width: 300px;
   display: flex;
   flex-direction: column;
-
-  ${(props) =>
-    props.$isDropImpossible &&
-    css`
-      animation: ${shake} 0.5s;
-    `}
+  flex: 1 1 43%
+    ${(props) =>
+      props.$isDropImpossible &&
+      css`
+        animation: ${shake} 0.5s;
+      `};
 `;
 
 export const ColumnTitle = styled.div`
@@ -30,6 +30,10 @@ export const ColumnTitle = styled.div`
   font-size: 20px;
   font-weight: 600;
   border-radius: 8px 8px 0 0;
+
+  @media (max-width: 650px) {
+    font-size: 14px;
+  }
 `;
 
 export const Column = styled.div`
@@ -39,4 +43,12 @@ export const Column = styled.div`
   flex-grow: 1;
   min-height: 600px;
   border-radius: 0 0 8px 8px;
+
+  @media (max-width: 650px) {
+    min-height: 500px;
+  }
+
+  @media (max-width: 520px) {
+    min-height: 350px;
+  }
 `;

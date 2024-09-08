@@ -6,6 +6,10 @@ export const DragAndDropContainer = styled.div`
   padding: 0 20px;
   display: flex;
   justify-content: space-evenly;
+
+  @media (max-width: 520px) {
+    flex-wrap: wrap;
+  }
 `;
 
 export const DragAndDropTitle = styled.div`
@@ -14,13 +18,31 @@ export const DragAndDropTitle = styled.div`
   padding: 25px;
   padding-bottom: 25px;
   text-align: center;
+
+  @media (max-width: 650px) {
+    font-size: 64px;
+  }
+
+  @media (max-width: 520px) {
+    font-size: 48px;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 36px;
+  }
+`;
+
+export const ButtonToolTipContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
 `;
 
 export const ResetButton = styled.button`
-  display: block;
   margin-right: 20px;
   margin-left: 50px;
-  margin-bottom: 15px;
   padding: 15px 30px;
   font-size: 18px;
   font-weight: bold;
@@ -53,17 +75,10 @@ export const ResetButton = styled.button`
   }
 `;
 
-export const ToolTipWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 15px;
-`;
-
 export const ToolTipTextContainer = styled.div`
   width: max-content;
   display: flex;
   flex-direction: column;
-  visibility: hidden;
   background-color: #555;
   border-radius: 5px;
   padding: 10px;
@@ -73,11 +88,29 @@ export const ToolTipTextContainer = styled.div`
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
-  transition: opacity 0.3s;
-  gap: 5px;
+  transition: opacity 0.2s;
+  gap: 6px;
+  visibility: hidden;
+
+  @media (max-width: 650px) {
+    width: 450px;
+    transform: translateX(-70%);
+  }
+
+  @media (max-width: 520px) {
+    bottom: -510%;
+    width: 350px;
+  }
+
+  @media (max-width: 400px) {
+    bottom: -650%;
+    width: 250px;
+    transform: translateX(-80%);
+  }
 `;
 
 export const ToolTipText = styled.div`
+  font-size: 14px;
   color: #fff;
 `;
 
@@ -85,13 +118,13 @@ export const ToolTip = styled.div`
   position: relative;
   cursor: pointer;
 
-  &:hover ${ToolTipTextContainer} {
+  &:hover ${ToolTipTextContainer}, &:focus ${ToolTipTextContainer} {
     visibility: visible;
     opacity: 1;
   }
 `;
 
-export const InfoIcon = styled.span`
+export const InfoIcon = styled.div`
   display: inline-block;
   width: 25px;
   height: 25px;
@@ -102,10 +135,4 @@ export const InfoIcon = styled.span`
   line-height: 19px;
   font-weight: 1000;
   color: black;
-`;
-
-export const ButtonToolTipContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;

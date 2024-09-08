@@ -25,4 +25,10 @@ export const Item = styled.div`
         : props.$isDragging
           ? '#dce7fa'
           : 'white'};
+
+  @media (max-width: 650px) {
+    font-size: 12px;
+    padding: 12px; // GRID * 2
+    padding-left: 10px;
+  }
 `;

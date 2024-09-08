@@ -18,6 +18,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: "Inter", sans-serif;
     font-weight: 400;
     background-color: #418df3;
+    padding-bottom: 50px;
   }
 `;
 
