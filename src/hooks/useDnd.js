@@ -12,6 +12,7 @@ export const useDnd = (initialItems, initialColumns) => {
   const [dndData, setDndData] = useState(getDndData(initialItems, initialColumns));
   const [invalidItem, setInvalidItem] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [impossibleCol, setImpossibleCol] = useState(null);
 
   const handleSelectItem = useCallback(
     (itemId, columnId, event) => {
@@ -57,6 +58,7 @@ export const useDnd = (initialItems, initialColumns) => {
 
   const onDragUpdate = useCallback(
     (update) => {
+      setImpossibleCol(null);
       const { destination, source, draggableId } = update;
 
       if (!destination) {
@@ -82,6 +84,8 @@ export const useDnd = (initialItems, initialColumns) => {
             const maxIndex = group[group.length - 1];
             if (destination.index >= minIndex && destination.index <= maxIndex) {
               isIntercept = true;
+
+              break;
             }
           }
 
@@ -178,6 +182,8 @@ export const useDnd = (initialItems, initialColumns) => {
       if (!destination) return;
 
       if (source.droppableId === 'column-1' && destination.droppableId === 'column-3') {
+        setImpossibleCol(destination.droppableId);
+
         return;
       }
 
@@ -219,6 +225,8 @@ export const useDnd = (initialItems, initialColumns) => {
           const targetIdxNum = Number(newItemIds[adjustedFinishIndex]?.split('-')[1]);
 
           if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+            setImpossibleCol(destination.droppableId);
+
             return;
           }
 
@@ -228,6 +236,8 @@ export const useDnd = (initialItems, initialColumns) => {
             const minIndex = group[0];
             const maxIndex = group[group.length - 1];
             if (destination.index >= minIndex && destination.index <= maxIndex) {
+              setImpossibleCol(destination.droppableId);
+
               return;
             }
           }
@@ -259,6 +269,8 @@ export const useDnd = (initialItems, initialColumns) => {
           const targetIdxNum = Number(finishColumn.itemIds[destination.index]?.split('-')[1]);
 
           if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+            setImpossibleCol(destination.droppableId);
+
             return;
           }
 
@@ -290,6 +302,8 @@ export const useDnd = (initialItems, initialColumns) => {
             Number(draggableId.split('-')[1]) % 2 === 0 &&
             Number(nextItem?.split('-')[1]) % 2 === 0
           ) {
+            setImpossibleCol(destination.droppableId);
+
             return;
           }
 
@@ -310,6 +324,8 @@ export const useDnd = (initialItems, initialColumns) => {
           Number(draggableId.split('-')[1]) % 2 === 0 &&
           Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0
         ) {
+          setImpossibleCol(destination.droppableId);
+
           return;
         }
 
@@ -346,5 +362,6 @@ export const useDnd = (initialItems, initialColumns) => {
     onDragUpdate,
     onDragEnd,
     resetBoard,
+    impossibleCol,
   };
 };

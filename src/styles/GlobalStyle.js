@@ -17,6 +17,7 @@ const GlobalStyle = createGlobalStyle`
     // default font style
     font-family: "Inter", sans-serif;
     font-weight: 400;
+    background-color: #418df3;
   }
 `;
 

@@ -4,11 +4,12 @@ import DraggableWrapper from '@/components/DragAndDrop/DraggableWrapper/Draggabl
 import { useDndContext } from '@/hooks/useDndContext';
 
 function DroppableWrapper({ columnData, itemsData }) {
-  const { invalidItem } = useDndContext();
+  const { invalidItem, impossibleCol } = useDndContext();
   const isThirdColumn = columnData.id === 'column-3';
+  const isDropImpossible = impossibleCol && impossibleCol === columnData.id ? true : false;
 
   return (
-    <S.ColumnContainer>
+    <S.ColumnContainer $isDropImpossible={isDropImpossible}>
       <S.ColumnTitle>{columnData.title}</S.ColumnTitle>
       <Droppable droppableId={columnData.id}>
         {(provided, snapshot) => (

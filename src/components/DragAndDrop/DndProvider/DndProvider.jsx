@@ -12,6 +12,7 @@ export function DndProvider({ children }) {
     onDragUpdate,
     onDragEnd,
     resetBoard,
+    impossibleCol,
   } = useDnd(12, 4);
 
   return (
@@ -24,6 +25,7 @@ export function DndProvider({ children }) {
         onDragUpdate,
         onDragEnd,
         resetBoard,
+        impossibleCol,
       }}
     >
       {children}
