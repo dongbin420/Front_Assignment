@@ -15,12 +15,13 @@ export const ColumnContainer = styled.div`
   width: 300px;
   display: flex;
   flex-direction: column;
-  flex: 1 1 43%
-    ${(props) =>
-      props.$isDropImpossible &&
-      css`
-        animation: ${shake} 0.5s;
-      `};
+  flex: 1 1 43%;
+
+  ${(props) =>
+    props.$isDropImpossible &&
+    css`
+      animation: ${shake} 0.5s;
+    `};
 `;
 
 export const ColumnTitle = styled.div`
