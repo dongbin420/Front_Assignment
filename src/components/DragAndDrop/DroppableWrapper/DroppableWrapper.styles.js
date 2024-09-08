@@ -18,7 +18,7 @@ export const ColumnContainer = styled.div`
   flex: 1 1 43%;
 
   ${(props) =>
-    props.$isDropImpossible &&
+    props.$isDropImpossibleAfterEnd &&
     css`
       animation: ${shake} 0.5s;
     `};
@@ -39,7 +39,7 @@ export const ColumnTitle = styled.div`
 
 export const Column = styled.div`
   background-color: ${(props) =>
-    props.$isInvalidDrop ? '#f9fafc' : props.$isDraggingOver ? '#e3f4fb' : '#f9fafc'};
+    props.$isDropImpossibleWhileUpdate ? '#f9fafc' : props.$isDraggingOver ? '#e3f4fb' : '#f9fafc'};
   padding: 12px;
   flex-grow: 1;
   min-height: 600px;

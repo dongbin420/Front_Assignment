@@ -7,12 +7,6 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
 
-  a {
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-  }
-
   body {
     // default font style
     font-family: "Inter", sans-serif;

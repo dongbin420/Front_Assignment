@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
 export const Item = styled.div`
-  user-select: 'none'; // 해당 요소의 텍스트 선택 못함(드래그 등)
+  user-select: 'none';
   font-size: 16px;
   font-weight: 700;
-  padding: 24px; // GRID * 2
+  padding: 24px;
   padding-left: 20px;
-  margin: 0 0 10px 0; // GRID
+  margin: 0 0 10px 0;
   border-radius: 8px;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   border: ${(props) =>
@@ -28,7 +28,7 @@ export const Item = styled.div`
 
   @media (max-width: 650px) {
     font-size: 12px;
-    padding: 12px; // GRID * 2
+    padding: 12px;
     padding-left: 10px;
   }
 `;

@@ -6,26 +6,26 @@ export const DndContext = createContext();
 export function DndProvider({ children }) {
   const {
     dndData,
-    invalidItem,
+    invalidLayout,
     selectedItems,
     handleSelectItem,
     onDragUpdate,
     onDragEnd,
     resetBoard,
-    impossibleCol,
+    invalidCol,
   } = useDnd(12, 4);
 
   return (
     <DndContext.Provider
       value={{
         dndData,
-        invalidItem,
+        invalidLayout,
         selectedItems,
         handleSelectItem,
         onDragUpdate,
         onDragEnd,
         resetBoard,
-        impossibleCol,
+        invalidCol,
       }}
     >
       {children}

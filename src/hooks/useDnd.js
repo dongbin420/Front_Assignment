@@ -10,9 +10,9 @@ import {
 export const useDnd = (initialItems, initialColumns) => {
   const initialDnd = getDndData(initialItems, initialColumns);
   const [dndData, setDndData] = useState(getDndData(initialItems, initialColumns));
-  const [invalidItem, setInvalidItem] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [impossibleCol, setImpossibleCol] = useState(null);
+  const [invalidLayout, setInvalidLayout] = useState({});
+  const [invalidCol, setInvalidCol] = useState(null);
 
   const handleSelectItem = useCallback(
     (itemId, columnId, event) => {
@@ -58,11 +58,11 @@ export const useDnd = (initialItems, initialColumns) => {
 
   const onDragUpdate = useCallback(
     (update) => {
-      setImpossibleCol(null);
+      setInvalidCol(null);
       const { destination, source, draggableId } = update;
 
       if (!destination) {
-        setInvalidItem(null);
+        setInvalidLayout({});
 
         return;
       }
@@ -89,7 +89,6 @@ export const useDnd = (initialItems, initialColumns) => {
             }
           }
 
-          // 다중 드래그에서, 같은 컬럼일 때, 짝수 확인 로직
           const newItemIds = Array.from(startColumn.itemIds);
           const sortedSelectedItems = selectedItems
             .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
@@ -124,7 +123,6 @@ export const useDnd = (initialItems, initialColumns) => {
             isInFrontEven = true;
           }
         } else {
-          // 다중 드래그에서, 다른 컬럼일 때, 짝수 확인 로직
           const newItemIds = Array.from(startColumn.itemIds);
           const sortedSelectedItems = selectedItems
             .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
@@ -166,9 +164,9 @@ export const useDnd = (initialItems, initialColumns) => {
         (isIntercept && selectedItems.map((item) => item.id).includes(draggableId)) ||
         isInFrontEven
       ) {
-        setInvalidItem(draggableId);
+        setInvalidLayout({ draggableId, droppableId: destination.droppableId });
       } else {
-        setInvalidItem(null);
+        setInvalidLayout({});
       }
     },
     [dndData.columnOrder, dndData.columns, selectedItems],
@@ -176,13 +174,13 @@ export const useDnd = (initialItems, initialColumns) => {
 
   const onDragEnd = useCallback(
     (result) => {
-      setInvalidItem(null);
+      setInvalidLayout({});
       const { destination, source, draggableId } = result;
 
       if (!destination) return;
 
       if (source.droppableId === 'column-1' && destination.droppableId === 'column-3') {
-        setImpossibleCol(destination.droppableId);
+        setInvalidCol(destination.droppableId);
 
         return;
       }
@@ -193,7 +191,6 @@ export const useDnd = (initialItems, initialColumns) => {
 
       if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
         if (startColumn === finishColumn) {
-          // 다중 드래그에서, 같은 컬럼일 때, 짝수 확인 로직 들어갈 자리
           const newItemIds = Array.from(startColumn.itemIds);
           const sortedSelectedItems = selectedItems
             .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
@@ -225,7 +222,7 @@ export const useDnd = (initialItems, initialColumns) => {
           const targetIdxNum = Number(newItemIds[adjustedFinishIndex]?.split('-')[1]);
 
           if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
-            setImpossibleCol(destination.droppableId);
+            setInvalidCol(destination.droppableId);
 
             return;
           }
@@ -236,7 +233,7 @@ export const useDnd = (initialItems, initialColumns) => {
             const minIndex = group[0];
             const maxIndex = group[group.length - 1];
             if (destination.index >= minIndex && destination.index <= maxIndex) {
-              setImpossibleCol(destination.droppableId);
+              setInvalidCol(destination.droppableId);
 
               return;
             }
@@ -257,7 +254,6 @@ export const useDnd = (initialItems, initialColumns) => {
             },
           }));
         } else {
-          // 다중 드래그에서, 다른 컬럼일 때, 짝수 확인 로직 들어갈 자리
           const newItemIds = Array.from(startColumn.itemIds);
           const sortedSelectedItems = selectedItems
             .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
@@ -269,7 +265,7 @@ export const useDnd = (initialItems, initialColumns) => {
           const targetIdxNum = Number(finishColumn.itemIds[destination.index]?.split('-')[1]);
 
           if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
-            setImpossibleCol(destination.droppableId);
+            setInvalidCol(destination.droppableId);
 
             return;
           }
@@ -302,7 +298,7 @@ export const useDnd = (initialItems, initialColumns) => {
             Number(draggableId.split('-')[1]) % 2 === 0 &&
             Number(nextItem?.split('-')[1]) % 2 === 0
           ) {
-            setImpossibleCol(destination.droppableId);
+            setInvalidCol(destination.droppableId);
 
             return;
           }
@@ -324,7 +320,7 @@ export const useDnd = (initialItems, initialColumns) => {
           Number(draggableId.split('-')[1]) % 2 === 0 &&
           Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0
         ) {
-          setImpossibleCol(destination.droppableId);
+          setInvalidCol(destination.droppableId);
 
           return;
         }
@@ -356,12 +352,12 @@ export const useDnd = (initialItems, initialColumns) => {
 
   return {
     dndData,
-    invalidItem,
+    invalidLayout,
     selectedItems,
     handleSelectItem,
     onDragUpdate,
     onDragEnd,
     resetBoard,
-    impossibleCol,
+    invalidCol,
   };
 };

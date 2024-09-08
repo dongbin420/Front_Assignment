@@ -3,8 +3,10 @@ import { Draggable } from 'react-beautiful-dnd';
 import { useDndContext } from '@/hooks/useDndContext';
 
 function DraggableWrapper({ itemData, idx, columnId }) {
-  const { invalidItem, selectedItems, handleSelectItem } = useDndContext();
+  const { invalidLayout, selectedItems, handleSelectItem } = useDndContext();
   const isSelected = selectedItems.some((item) => item.id === itemData.id);
+  const isInvalidItem = invalidLayout.draggableId === itemData.id;
+  const isInvalidItemSelected = selectedItems.some((item) => item.id === invalidLayout.draggableId);
 
   return (
     <Draggable draggableId={itemData.id} index={idx}>
@@ -14,9 +16,9 @@ function DraggableWrapper({ itemData, idx, columnId }) {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          $isDragging={snapshot.isDragging} // styled-components props가 dom으로 전달되지 않음
-          $isInvalidItem={invalidItem === itemData.id || (invalidItem && isSelected)}
+          $isDragging={snapshot.isDragging}
           $isSelected={isSelected}
+          $isInvalidItem={isInvalidItem || (isSelected && isInvalidItemSelected)}
         >
           {itemData.content}
         </S.Item>

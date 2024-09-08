@@ -4,20 +4,20 @@ import DraggableWrapper from '@/components/DragAndDrop/DraggableWrapper/Draggabl
 import { useDndContext } from '@/hooks/useDndContext';
 
 function DroppableWrapper({ columnData, itemsData }) {
-  const { invalidItem, impossibleCol } = useDndContext();
-  const isThirdColumn = columnData.id === 'column-3';
-  const isDropImpossible = impossibleCol && impossibleCol === columnData.id ? true : false;
+  const { invalidLayout, invalidCol } = useDndContext();
+  const isDropImpossibleWhileUpdate = invalidLayout.droppableId === columnData.id;
+  const isDropImpossibleAfterEnd = invalidCol === columnData.id;
 
   return (
-    <S.ColumnContainer $isDropImpossible={isDropImpossible}>
+    <S.ColumnContainer $isDropImpossibleAfterEnd={isDropImpossibleAfterEnd}>
       <S.ColumnTitle>{columnData.title}</S.ColumnTitle>
       <Droppable droppableId={columnData.id}>
         {(provided, snapshot) => (
           <S.Column
             {...provided.droppableProps}
             ref={provided.innerRef}
-            $isDraggingOver={snapshot.isDraggingOver} // styled-components props가 dom으로 전달되지 않음
-            $isInvalidDrop={isThirdColumn && invalidItem !== null}
+            $isDraggingOver={snapshot.isDraggingOver}
+            isDropImpossibleWhileUpdate={isDropImpossibleWhileUpdate}
           >
             {itemsData.map((item, idx) => (
               <DraggableWrapper key={item.id} itemData={item} idx={idx} columnId={columnData.id} />
