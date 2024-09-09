@@ -1,4 +1,8 @@
-import { findAdjacentGroups, getNewStartColAndSortedSelectedItems } from './commonUtils';
+import {
+  findAdjacentGroups,
+  getNewStartColAndSortedSelectedItems,
+  getAdjustedFinishIndex,
+} from './commonUtils';
 
 export const checkIsEvenForReorderingSameCol = (column, startIndex, finishIndex, draggableId) => {
   const columnWithoutDraggedItem = Array.from(column.itemIds);
@@ -23,20 +27,9 @@ export const checkIsEvenForMultiReorderingSameCol = (
     selectedItems,
   );
 
-  let adjustedFinishIndex = finishIndex;
-
-  sortedSelectedItems.forEach((item) => {
-    if (item.idx < finishIndex) {
-      adjustedFinishIndex -= 1;
-    }
-  });
-
-  if (startIndex < finishIndex) {
-    adjustedFinishIndex += 1;
-  }
-
+  const newFinishIndex = getAdjustedFinishIndex(finishIndex, startIndex, sortedSelectedItems);
   const lastItemNum = Number(sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1]);
-  const targetIdxNum = Number(newColItemIds[adjustedFinishIndex]?.split('-')[1]);
+  const targetIdxNum = Number(newColItemIds[newFinishIndex]?.split('-')[1]);
 
   if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
     return true;

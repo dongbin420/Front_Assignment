@@ -1,4 +1,4 @@
-import { getNewStartColAndSortedSelectedItems } from './commonUtils';
+import { getNewStartColAndSortedSelectedItems, getAdjustedFinishIndex } from './commonUtils';
 
 export const reorderSameColumn = (column, startIndex, finishIndex) => {
   const newItemIds = Array.from(column.itemIds);
@@ -39,19 +39,8 @@ export const multiReorderSameColumn = (column, selectedItems, finishIndex, start
     selectedItems,
   );
 
-  let adjustedFinishIndex = finishIndex;
-
-  sortedSelectedItems.forEach((item) => {
-    if (item.idx < finishIndex) {
-      adjustedFinishIndex -= 1;
-    }
-  });
-
-  if (startIndex < finishIndex) {
-    adjustedFinishIndex += 1;
-  }
-
-  newColItemIds.splice(adjustedFinishIndex, 0, ...sortedSelectedItems.map((item) => item.id));
+  const newFinishIndex = getAdjustedFinishIndex(finishIndex, startIndex, sortedSelectedItems);
+  newColItemIds.splice(newFinishIndex, 0, ...sortedSelectedItems.map((item) => item.id));
 
   const newColumn = {
     ...column,

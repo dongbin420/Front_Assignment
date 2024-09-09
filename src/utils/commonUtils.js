@@ -37,3 +37,19 @@ export const getNewStartColAndSortedSelectedItems = (startColumn, selectedItems)
 
   return { newColItemIds, sortedSelectedItems };
 };
+
+export const getAdjustedFinishIndex = (finishIndex, startIndex, sortedSelectedItems) => {
+  let adjustedFinishIndex = finishIndex;
+
+  sortedSelectedItems.forEach((item) => {
+    if (item.idx < finishIndex) {
+      adjustedFinishIndex -= 1;
+    }
+  });
+
+  if (startIndex < finishIndex) {
+    adjustedFinishIndex += 1;
+  }
+
+  return adjustedFinishIndex;
+};
