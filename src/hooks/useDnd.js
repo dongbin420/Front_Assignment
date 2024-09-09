@@ -10,6 +10,7 @@ import {
   checkIsItemIntercepting,
   checkIsEvenForMultiReorderingSameCol,
   checkIsEvenForMultiReorderingDifferentCol,
+  checkIsEvenForReorderingSameCol,
 } from '@/utils/validateUtils';
 
 export const useDnd = (initialItems, initialColumns) => {
@@ -18,25 +19,6 @@ export const useDnd = (initialItems, initialColumns) => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [invalidLayout, setInvalidLayout] = useState({});
   const [invalidCol, setInvalidCol] = useState(null);
-
-  const handleSelectItem = useCallback(
-    (itemId, columnId, event) => {
-      if (event.ctrlKey) {
-        setSelectedItems((prevSelected) => {
-          if (selectedItems.some((item) => item.id === itemId)) {
-            return prevSelected.filter((item) => item.id !== itemId);
-          }
-
-          if (selectedItems.length === 0 || selectedItems[0].columnId === columnId) {
-            return [...prevSelected, { id: itemId, columnId }];
-          }
-
-          return prevSelected;
-        });
-      }
-    },
-    [selectedItems],
-  );
 
   const onDragUpdate = useCallback(
     (update) => {
@@ -93,14 +75,14 @@ export const useDnd = (initialItems, initialColumns) => {
         }
       } else {
         if (startColumn === finishColumn) {
-          const columnWithoutDraggedItem = Array.from(startColumn.itemIds);
-          columnWithoutDraggedItem.splice(source.index, 1);
-          const nextItem = columnWithoutDraggedItem[destination.index];
+          const isEven = checkIsEvenForReorderingSameCol(
+            startColumn,
+            source.index,
+            destination.index,
+            draggableId,
+          );
 
-          if (
-            Number(draggableId.split('-')[1]) % 2 === 0 &&
-            Number(nextItem?.split('-')[1]) % 2 === 0
-          ) {
+          if (isEven) {
             isInFrontEven = true;
           }
         } else {
@@ -218,14 +200,14 @@ export const useDnd = (initialItems, initialColumns) => {
         setSelectedItems([]);
       } else {
         if (startColumn === finishColumn) {
-          const columnWithoutDraggedItem = Array.from(startColumn.itemIds);
-          columnWithoutDraggedItem.splice(source.index, 1);
-          const nextItem = columnWithoutDraggedItem[destination.index];
+          const isEven = checkIsEvenForReorderingSameCol(
+            startColumn,
+            source.index,
+            destination.index,
+            draggableId,
+          );
 
-          if (
-            Number(draggableId.split('-')[1]) % 2 === 0 &&
-            Number(nextItem?.split('-')[1]) % 2 === 0
-          ) {
+          if (isEven) {
             setInvalidCol(destination.droppableId);
 
             return;
@@ -269,6 +251,25 @@ export const useDnd = (initialItems, initialColumns) => {
       }
     },
     [dndData.columns, selectedItems],
+  );
+
+  const handleSelectItem = useCallback(
+    (itemId, columnId, event) => {
+      if (event.ctrlKey) {
+        setSelectedItems((prevSelected) => {
+          if (selectedItems.some((item) => item.id === itemId)) {
+            return prevSelected.filter((item) => item.id !== itemId);
+          }
+
+          if (selectedItems.length === 0 || selectedItems[0].columnId === columnId) {
+            return [...prevSelected, { id: itemId, columnId }];
+          }
+
+          return prevSelected;
+        });
+      }
+    },
+    [selectedItems],
   );
 
   const resetBoard = useCallback(() => {
