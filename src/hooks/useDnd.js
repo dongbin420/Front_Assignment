@@ -23,6 +23,7 @@ export const useDnd = (initialItems, initialColumns) => {
   const onDragUpdate = useCallback(
     (update) => {
       setInvalidCol(null);
+
       const { destination, source, draggableId } = update;
 
       if (!destination) {
@@ -36,11 +37,15 @@ export const useDnd = (initialItems, initialColumns) => {
       const startColumn = dndData.columns[source.droppableId];
       const finishColumn = dndData.columns[destination.droppableId];
       const itemIds = startColumn.itemIds;
+
+      const isMultiDrag =
+        selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId);
+      const isSameCol = startColumn === finishColumn;
       let isIntercept = false;
       let isInFrontEven = false;
 
-      if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
-        if (startColumn === finishColumn) {
+      if (isMultiDrag) {
+        if (isSameCol) {
           const isItemInterCepting = checkIsItemIntercepting(
             selectedItems,
             itemIds,
@@ -74,7 +79,7 @@ export const useDnd = (initialItems, initialColumns) => {
           }
         }
       } else {
-        if (startColumn === finishColumn) {
+        if (isSameCol) {
           const isEven = checkIsEvenForReorderingSameCol(
             startColumn,
             source.index,
@@ -86,20 +91,21 @@ export const useDnd = (initialItems, initialColumns) => {
             isInFrontEven = true;
           }
         } else {
-          if (
+          const isEven =
             Number(draggableId.split('-')[1]) % 2 === 0 &&
-            Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0
-          ) {
+            Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0;
+
+          if (isEven) {
             isInFrontEven = true;
           }
         }
       }
 
-      if (
-        (finishColumnIdx === 2 && startColumnIdx === 0) ||
-        (isIntercept && selectedItems.map((item) => item.id).includes(draggableId)) ||
-        isInFrontEven
-      ) {
+      const isFromFirstColToThirdCol = startColumnIdx === 0 && finishColumnIdx === 2;
+      const isDraggableIntercepting =
+        isIntercept && selectedItems.map((item) => item.id).includes(draggableId);
+
+      if (isFromFirstColToThirdCol || isDraggableIntercepting || isInFrontEven) {
         setInvalidLayout({ draggableId, droppableId: destination.droppableId });
       } else {
         setInvalidLayout({});
@@ -111,11 +117,15 @@ export const useDnd = (initialItems, initialColumns) => {
   const onDragEnd = useCallback(
     (result) => {
       setInvalidLayout({});
+
       const { destination, source, draggableId } = result;
 
       if (!destination) return;
 
-      if (source.droppableId === 'column-1' && destination.droppableId === 'column-3') {
+      const isFromFirstColToThirdCol =
+        source.droppableId === 'column-1' && destination.droppableId === 'column-3';
+
+      if (isFromFirstColToThirdCol) {
         setInvalidCol(destination.droppableId);
 
         return;
@@ -125,8 +135,12 @@ export const useDnd = (initialItems, initialColumns) => {
       const finishColumn = dndData.columns[destination.droppableId];
       const itemIds = startColumn.itemIds;
 
-      if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
-        if (startColumn === finishColumn) {
+      const isMultiDrag =
+        selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId);
+      const isSameCol = startColumn === finishColumn;
+
+      if (isMultiDrag) {
+        if (isSameCol) {
           const isItemInterCepting = checkIsItemIntercepting(
             selectedItems,
             itemIds,
@@ -199,7 +213,7 @@ export const useDnd = (initialItems, initialColumns) => {
 
         setSelectedItems([]);
       } else {
-        if (startColumn === finishColumn) {
+        if (isSameCol) {
           const isEven = checkIsEvenForReorderingSameCol(
             startColumn,
             source.index,
@@ -223,10 +237,11 @@ export const useDnd = (initialItems, initialColumns) => {
             },
           }));
         } else {
-          if (
+          const isEven =
             Number(draggableId.split('-')[1]) % 2 === 0 &&
-            Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0
-          ) {
+            Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0;
+
+          if (isEven) {
             setInvalidCol(destination.droppableId);
 
             return;
