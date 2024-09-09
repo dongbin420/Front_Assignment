@@ -35,3 +35,44 @@ export const checkIsItemIntercepting = (selectedItems, itemIds, finishIndex) => 
 
   return false;
 };
+
+export const checkIsEvenForMultiReorderingSameCol = (
+  column,
+  selectedItems,
+  startIndex,
+  finishIndex,
+) => {
+  const newItemIds = Array.from(column.itemIds);
+  const sortedSelectedItems = selectedItems
+    .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
+    .sort((a, b) => a.idx - b.idx);
+
+  sortedSelectedItems.forEach((item) => {
+    const idx = newItemIds.indexOf(item.id);
+
+    if (idx > -1) {
+      newItemIds.splice(idx, 1);
+    }
+  });
+
+  let adjustedFinishIndex = finishIndex;
+
+  sortedSelectedItems.forEach((item) => {
+    if (item.idx < finishIndex) {
+      adjustedFinishIndex -= 1;
+    }
+  });
+
+  if (startIndex < finishIndex) {
+    adjustedFinishIndex += 1;
+  }
+
+  const lastItemNum = Number(sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1]);
+  const targetIdxNum = Number(newItemIds[adjustedFinishIndex]?.split('-')[1]);
+
+  if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+    return true;
+  }
+
+  return false;
+};

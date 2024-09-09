@@ -6,7 +6,10 @@ import {
   multiReorderSameColumn,
   multiReorderDifferentColumn,
 } from '@/utils/reorderUtils';
-import { checkIsItemIntercepting } from '@/utils/validateUtils';
+import {
+  checkIsItemIntercepting,
+  checkIsEvenForMultiReorderingSameCol,
+} from '@/utils/validateUtils';
 
 export const useDnd = (initialItems, initialColumns) => {
   const initialDnd = getDndData(initialItems, initialColumns);
@@ -65,37 +68,14 @@ export const useDnd = (initialItems, initialColumns) => {
             isIntercept = true;
           }
 
-          const newItemIds = Array.from(startColumn.itemIds);
-          const sortedSelectedItems = selectedItems
-            .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
-            .sort((a, b) => a.idx - b.idx);
-
-          sortedSelectedItems.forEach((item) => {
-            const idx = newItemIds.indexOf(item.id);
-
-            if (idx > -1) {
-              newItemIds.splice(idx, 1);
-            }
-          });
-
-          let adjustedFinishIndex = destination.index;
-
-          sortedSelectedItems.forEach((item) => {
-            if (item.idx < destination.index) {
-              adjustedFinishIndex -= 1;
-            }
-          });
-
-          if (source.index < destination.index) {
-            adjustedFinishIndex += 1;
-          }
-
-          const lastItemNum = Number(
-            sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1],
+          const isEvenForMultiReorderingSameCol = checkIsEvenForMultiReorderingSameCol(
+            startColumn,
+            selectedItems,
+            source.index,
+            destination.index,
           );
-          const targetIdxNum = Number(newItemIds[adjustedFinishIndex]?.split('-')[1]);
 
-          if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+          if (isEvenForMultiReorderingSameCol) {
             isInFrontEven = true;
           }
         } else {
@@ -179,37 +159,14 @@ export const useDnd = (initialItems, initialColumns) => {
             return;
           }
 
-          const newItemIds = Array.from(startColumn.itemIds);
-          const sortedSelectedItems = selectedItems
-            .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
-            .sort((a, b) => a.idx - b.idx);
-
-          sortedSelectedItems.forEach((item) => {
-            const idx = newItemIds.indexOf(item.id);
-
-            if (idx > -1) {
-              newItemIds.splice(idx, 1);
-            }
-          });
-
-          let adjustedFinishIndex = destination.index;
-
-          sortedSelectedItems.forEach((item) => {
-            if (item.idx < destination.index) {
-              adjustedFinishIndex -= 1;
-            }
-          });
-
-          if (source.index < destination.index) {
-            adjustedFinishIndex += 1;
-          }
-
-          const lastItemNum = Number(
-            sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1],
+          const isEvenForMultiReorderingSameCol = checkIsEvenForMultiReorderingSameCol(
+            startColumn,
+            selectedItems,
+            source.index,
+            destination.index,
           );
-          const targetIdxNum = Number(newItemIds[adjustedFinishIndex]?.split('-')[1]);
 
-          if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+          if (isEvenForMultiReorderingSameCol) {
             setInvalidCol(destination.droppableId);
 
             return;
