@@ -1,10 +1,7 @@
-export const checkIsEvenForReorderingSameCol = (
-  startColumn,
-  startIndex,
-  finishIndex,
-  draggableId,
-) => {
-  const columnWithoutDraggedItem = Array.from(startColumn.itemIds);
+import { findAdjacentGroups, getNewStartColAndSortedSelectedItems } from './commonUtils';
+
+export const checkIsEvenForReorderingSameCol = (column, startIndex, finishIndex, draggableId) => {
+  const columnWithoutDraggedItem = Array.from(column.itemIds);
   columnWithoutDraggedItem.splice(startIndex, 1);
   const nextItem = columnWithoutDraggedItem[finishIndex];
 
@@ -21,18 +18,10 @@ export const checkIsEvenForMultiReorderingSameCol = (
   startIndex,
   finishIndex,
 ) => {
-  const newItemIds = Array.from(column.itemIds);
-  const sortedSelectedItems = selectedItems
-    .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
-    .sort((a, b) => a.idx - b.idx);
-
-  sortedSelectedItems.forEach((item) => {
-    const idx = newItemIds.indexOf(item.id);
-
-    if (idx > -1) {
-      newItemIds.splice(idx, 1);
-    }
-  });
+  const { newColItemIds, sortedSelectedItems } = getNewStartColAndSortedSelectedItems(
+    column,
+    selectedItems,
+  );
 
   let adjustedFinishIndex = finishIndex;
 
@@ -47,7 +36,7 @@ export const checkIsEvenForMultiReorderingSameCol = (
   }
 
   const lastItemNum = Number(sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1]);
-  const targetIdxNum = Number(newItemIds[adjustedFinishIndex]?.split('-')[1]);
+  const targetIdxNum = Number(newColItemIds[adjustedFinishIndex]?.split('-')[1]);
 
   if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
     return true;
@@ -62,9 +51,9 @@ export const checkIsEvenForMultiReorderingDifferentCol = (
   selectedItems,
   finishIndex,
 ) => {
-  const newItemIds = Array.from(startColumn.itemIds);
+  const newColItemIds = Array.from(startColumn.itemIds);
   const sortedSelectedItems = selectedItems
-    .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
+    .map((item) => ({ id: item.id, idx: newColItemIds.indexOf(item.id) }))
     .sort((a, b) => a.idx - b.idx);
 
   const lastItemNum = Number(sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1]);
@@ -75,29 +64,6 @@ export const checkIsEvenForMultiReorderingDifferentCol = (
   }
 
   return false;
-};
-
-export const findAdjacentGroups = (selectedItems, itemIds) => {
-  const indices = selectedItems.map((item) => itemIds.indexOf(item.id)).sort((a, b) => a - b);
-  let adjacentGroups = [];
-  let currentGroup = [indices[0]];
-
-  for (let i = 1; i < indices.length; i++) {
-    if (indices[i] === indices[i - 1] + 1) {
-      currentGroup.push(indices[i]);
-    } else {
-      if (currentGroup.length >= 2) {
-        adjacentGroups.push([...currentGroup]);
-      }
-      currentGroup = [indices[i]];
-    }
-  }
-
-  if (currentGroup.length >= 2) {
-    adjacentGroups.push([...currentGroup]);
-  }
-
-  return adjacentGroups;
 };
 
 export const checkIsItemIntercepting = (selectedItems, itemIds, finishIndex) => {

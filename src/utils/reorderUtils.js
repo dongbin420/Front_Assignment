@@ -1,3 +1,5 @@
+import { getNewStartColAndSortedSelectedItems } from './commonUtils';
+
 export const reorderSameColumn = (column, startIndex, finishIndex) => {
   const newItemIds = Array.from(column.itemIds);
   const [removed] = newItemIds.splice(startIndex, 1);
@@ -32,18 +34,10 @@ export const reorderDifferentColumn = (startColumn, finishColumn, startIndex, fi
 };
 
 export const multiReorderSameColumn = (column, selectedItems, finishIndex, startIndex) => {
-  const newItemIds = Array.from(column.itemIds);
-  const sortedSelectedItems = selectedItems
-    .map((itemId) => ({ id: itemId, idx: newItemIds.indexOf(itemId) }))
-    .sort((a, b) => a.idx - b.idx);
-
-  sortedSelectedItems.forEach((item) => {
-    const idx = newItemIds.indexOf(item.id);
-
-    if (idx > -1) {
-      newItemIds.splice(idx, 1);
-    }
-  });
+  const { newColItemIds, sortedSelectedItems } = getNewStartColAndSortedSelectedItems(
+    column,
+    selectedItems,
+  );
 
   let adjustedFinishIndex = finishIndex;
 
@@ -57,11 +51,11 @@ export const multiReorderSameColumn = (column, selectedItems, finishIndex, start
     adjustedFinishIndex += 1;
   }
 
-  newItemIds.splice(adjustedFinishIndex, 0, ...sortedSelectedItems.map((item) => item.id));
+  newColItemIds.splice(adjustedFinishIndex, 0, ...sortedSelectedItems.map((item) => item.id));
 
   const newColumn = {
     ...column,
-    itemIds: newItemIds,
+    itemIds: newColItemIds,
   };
 
   return newColumn;
@@ -73,18 +67,8 @@ export const multiReorderDifferentColumn = (
   selectedItems,
   finishIndex,
 ) => {
-  const startColumnItemIds = Array.from(startColumn.itemIds);
-  const sortedSelectedItems = selectedItems
-    .map((itemId) => ({ id: itemId, idx: startColumnItemIds.indexOf(itemId) }))
-    .sort((a, b) => a.idx - b.idx);
-
-  sortedSelectedItems.forEach((item) => {
-    const idx = startColumnItemIds.indexOf(item.id);
-
-    if (idx > -1) {
-      startColumnItemIds.splice(idx, 1);
-    }
-  });
+  const { newColItemIds: startColumnItemIds, sortedSelectedItems } =
+    getNewStartColAndSortedSelectedItems(startColumn, selectedItems);
 
   const newStartColumn = {
     ...startColumn,

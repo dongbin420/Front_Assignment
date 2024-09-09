@@ -17,7 +17,7 @@ function DroppableWrapper({ columnData, itemsData }) {
             {...provided.droppableProps}
             ref={provided.innerRef}
             $isDraggingOver={snapshot.isDraggingOver}
-            isDropImpossibleWhileUpdate={isDropImpossibleWhileUpdate}
+            $isDropImpossibleWhileUpdate={isDropImpossibleWhileUpdate}
           >
             {itemsData.map((item, idx) => (
               <DraggableWrapper key={item.id} itemData={item} idx={idx} columnId={columnData.id} />

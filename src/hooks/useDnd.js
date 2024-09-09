@@ -154,7 +154,7 @@ export const useDnd = (initialItems, initialColumns) => {
 
           const newColumn = multiReorderSameColumn(
             startColumn,
-            selectedItems.map((item) => item.id),
+            selectedItems,
             destination.index,
             source.index,
           );
@@ -183,7 +183,7 @@ export const useDnd = (initialItems, initialColumns) => {
           const { newStartColumn, newFinishColumn } = multiReorderDifferentColumn(
             startColumn,
             finishColumn,
-            selectedItems.map((item) => item.id),
+            selectedItems,
             destination.index,
           );
 
