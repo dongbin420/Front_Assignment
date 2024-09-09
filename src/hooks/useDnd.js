@@ -9,6 +9,7 @@ import {
 import {
   checkIsItemIntercepting,
   checkIsEvenForMultiReorderingSameCol,
+  checkIsEvenForMultiReorderingDifferentCol,
 } from '@/utils/validateUtils';
 
 export const useDnd = (initialItems, initialColumns) => {
@@ -68,28 +69,25 @@ export const useDnd = (initialItems, initialColumns) => {
             isIntercept = true;
           }
 
-          const isEvenForMultiReorderingSameCol = checkIsEvenForMultiReorderingSameCol(
+          const isEven = checkIsEvenForMultiReorderingSameCol(
             startColumn,
             selectedItems,
             source.index,
             destination.index,
           );
 
-          if (isEvenForMultiReorderingSameCol) {
+          if (isEven) {
             isInFrontEven = true;
           }
         } else {
-          const newItemIds = Array.from(startColumn.itemIds);
-          const sortedSelectedItems = selectedItems
-            .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
-            .sort((a, b) => a.idx - b.idx);
-
-          const lastItemNum = Number(
-            sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1],
+          const isEven = checkIsEvenForMultiReorderingDifferentCol(
+            startColumn,
+            finishColumn,
+            selectedItems,
+            destination.index,
           );
-          const targetIdxNum = Number(finishColumn.itemIds[destination.index]?.split('-')[1]);
 
-          if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+          if (isEven) {
             isInFrontEven = true;
           }
         }
@@ -159,14 +157,14 @@ export const useDnd = (initialItems, initialColumns) => {
             return;
           }
 
-          const isEvenForMultiReorderingSameCol = checkIsEvenForMultiReorderingSameCol(
+          const isEven = checkIsEvenForMultiReorderingSameCol(
             startColumn,
             selectedItems,
             source.index,
             destination.index,
           );
 
-          if (isEvenForMultiReorderingSameCol) {
+          if (isEven) {
             setInvalidCol(destination.droppableId);
 
             return;
@@ -187,17 +185,14 @@ export const useDnd = (initialItems, initialColumns) => {
             },
           }));
         } else {
-          const newItemIds = Array.from(startColumn.itemIds);
-          const sortedSelectedItems = selectedItems
-            .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
-            .sort((a, b) => a.idx - b.idx);
-
-          const lastItemNum = Number(
-            sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1],
+          const isEven = checkIsEvenForMultiReorderingDifferentCol(
+            startColumn,
+            finishColumn,
+            selectedItems,
+            destination.index,
           );
-          const targetIdxNum = Number(finishColumn.itemIds[destination.index]?.split('-')[1]);
 
-          if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+          if (isEven) {
             setInvalidCol(destination.droppableId);
 
             return;

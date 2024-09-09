@@ -76,3 +76,24 @@ export const checkIsEvenForMultiReorderingSameCol = (
 
   return false;
 };
+
+export const checkIsEvenForMultiReorderingDifferentCol = (
+  startColumn,
+  finishColumn,
+  selectedItems,
+  finishIndex,
+) => {
+  const newItemIds = Array.from(startColumn.itemIds);
+  const sortedSelectedItems = selectedItems
+    .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
+    .sort((a, b) => a.idx - b.idx);
+
+  const lastItemNum = Number(sortedSelectedItems[sortedSelectedItems.length - 1].id.split('-')[1]);
+  const targetIdxNum = Number(finishColumn.itemIds[finishIndex]?.split('-')[1]);
+
+  if (lastItemNum % 2 === 0 && targetIdxNum % 2 === 0) {
+    return true;
+  }
+
+  return false;
+};
