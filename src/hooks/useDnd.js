@@ -5,6 +5,7 @@ import {
   reorderDifferentColumn,
   multiReorderSameColumn,
   multiReorderDifferentColumn,
+  findAdjacentGroups,
 } from '@/utils/dndUtils';
 
 export const useDnd = (initialItems, initialColumns) => {
@@ -32,29 +33,6 @@ export const useDnd = (initialItems, initialColumns) => {
     },
     [selectedItems],
   );
-
-  const findAdjacentGroups = (selectedItems, itemIds) => {
-    const indices = selectedItems.map((item) => itemIds.indexOf(item.id)).sort((a, b) => a - b);
-    let adjacentGroups = [];
-    let currentGroup = [indices[0]];
-
-    for (let i = 1; i < indices.length; i++) {
-      if (indices[i] === indices[i - 1] + 1) {
-        currentGroup.push(indices[i]);
-      } else {
-        if (currentGroup.length >= 2) {
-          adjacentGroups.push([...currentGroup]);
-        }
-        currentGroup = [indices[i]];
-      }
-    }
-
-    if (currentGroup.length >= 2) {
-      adjacentGroups.push([...currentGroup]);
-    }
-
-    return adjacentGroups;
-  };
 
   const onDragUpdate = useCallback(
     (update) => {
@@ -138,7 +116,7 @@ export const useDnd = (initialItems, initialColumns) => {
           }
         }
       } else {
-        if (finishColumnIdx === startColumnIdx) {
+        if (startColumn === finishColumn) {
           const columnWithoutDraggedItem = Array.from(startColumn.itemIds);
           columnWithoutDraggedItem.splice(source.index, 1);
           const nextItem = columnWithoutDraggedItem[destination.index];
@@ -314,32 +292,32 @@ export const useDnd = (initialItems, initialColumns) => {
           }));
 
           return;
+        } else {
+          if (
+            Number(draggableId.split('-')[1]) % 2 === 0 &&
+            Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0
+          ) {
+            setInvalidCol(destination.droppableId);
+
+            return;
+          }
+
+          const { newStartColumn, newFinishColumn } = reorderDifferentColumn(
+            startColumn,
+            finishColumn,
+            source.index,
+            destination.index,
+          );
+
+          setDndData((prevDatas) => ({
+            ...prevDatas,
+            columns: {
+              ...prevDatas.columns,
+              [newStartColumn.id]: newStartColumn,
+              [newFinishColumn.id]: newFinishColumn,
+            },
+          }));
         }
-
-        if (
-          Number(draggableId.split('-')[1]) % 2 === 0 &&
-          Number(finishColumn.itemIds[destination.index]?.split('-')[1]) % 2 === 0
-        ) {
-          setInvalidCol(destination.droppableId);
-
-          return;
-        }
-
-        const { newStartColumn, newFinishColumn } = reorderDifferentColumn(
-          startColumn,
-          finishColumn,
-          source.index,
-          destination.index,
-        );
-
-        setDndData((prevDatas) => ({
-          ...prevDatas,
-          columns: {
-            ...prevDatas.columns,
-            [newStartColumn.id]: newStartColumn,
-            [newFinishColumn.id]: newFinishColumn,
-          },
-        }));
       }
     },
     [dndData.columns, selectedItems],
