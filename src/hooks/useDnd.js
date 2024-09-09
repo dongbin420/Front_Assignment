@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
+import { getDndData } from '@/utils/dndUtils';
 import {
-  getDndData,
   reorderSameColumn,
   reorderDifferentColumn,
   multiReorderSameColumn,
   multiReorderDifferentColumn,
-  findAdjacentGroups,
-} from '@/utils/dndUtils';
+} from '@/utils/reorderUtils';
+import { checkIsItemIntercepting } from '@/utils/validateUtils';
 
 export const useDnd = (initialItems, initialColumns) => {
   const initialDnd = getDndData(initialItems, initialColumns);
@@ -55,16 +55,14 @@ export const useDnd = (initialItems, initialColumns) => {
 
       if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
         if (startColumn === finishColumn) {
-          const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
+          const isItemInterCepting = checkIsItemIntercepting(
+            selectedItems,
+            itemIds,
+            destination.index,
+          );
 
-          for (let group of adjacentGroups) {
-            const minIndex = group[0];
-            const maxIndex = group[group.length - 1];
-            if (destination.index >= minIndex && destination.index <= maxIndex) {
-              isIntercept = true;
-
-              break;
-            }
+          if (isItemInterCepting) {
+            isIntercept = true;
           }
 
           const newItemIds = Array.from(startColumn.itemIds);
@@ -169,6 +167,18 @@ export const useDnd = (initialItems, initialColumns) => {
 
       if (selectedItems.length > 0 && selectedItems.map((item) => item.id).includes(draggableId)) {
         if (startColumn === finishColumn) {
+          const isItemInterCepting = checkIsItemIntercepting(
+            selectedItems,
+            itemIds,
+            destination.index,
+          );
+
+          if (isItemInterCepting) {
+            setInvalidCol(destination.droppableId);
+
+            return;
+          }
+
           const newItemIds = Array.from(startColumn.itemIds);
           const sortedSelectedItems = selectedItems
             .map((item) => ({ id: item.id, idx: newItemIds.indexOf(item.id) }))
@@ -203,18 +213,6 @@ export const useDnd = (initialItems, initialColumns) => {
             setInvalidCol(destination.droppableId);
 
             return;
-          }
-
-          const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
-
-          for (let group of adjacentGroups) {
-            const minIndex = group[0];
-            const maxIndex = group[group.length - 1];
-            if (destination.index >= minIndex && destination.index <= maxIndex) {
-              setInvalidCol(destination.droppableId);
-
-              return;
-            }
           }
 
           const newColumn = multiReorderSameColumn(
@@ -290,8 +288,6 @@ export const useDnd = (initialItems, initialColumns) => {
               [newColumn.id]: newColumn,
             },
           }));
-
-          return;
         } else {
           if (
             Number(draggableId.split('-')[1]) % 2 === 0 &&
