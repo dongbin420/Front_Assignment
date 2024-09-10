@@ -62,12 +62,12 @@ export const checkIsEvenForMultiReorderingDifferentCol = (
 export const checkIsItemIntercepting = (selectedItems, itemIds, finishIndex) => {
   const adjacentGroups = findAdjacentGroups(selectedItems, itemIds);
 
-  const isInterCepting = adjacentGroups.some((group) => {
+  const isIntercepting = adjacentGroups.some((group) => {
     const minIndex = group[0];
     const maxIndex = group[group.length - 1];
 
     return finishIndex >= minIndex && finishIndex <= maxIndex;
   });
 
-  return isInterCepting;
+  return isIntercepting;
 };
