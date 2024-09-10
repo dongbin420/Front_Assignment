@@ -17,7 +17,8 @@ export const useItemSelection = (selectedItems, setSelectedItems) => {
         });
       }
     },
-    [selectedItems, setSelectedItems],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedItems],
   );
 
   return {

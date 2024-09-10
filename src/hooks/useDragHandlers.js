@@ -85,7 +85,8 @@ export const useDragHandlers = (
         setInvalidLayout({});
       }
     },
-    [dndData.columnOrder, dndData.columns, selectedItems, setInvalidCol, setInvalidLayout],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dndData.columnOrder, dndData.columns, selectedItems],
   );
 
   const onDragEnd = useCallback(
@@ -228,7 +229,8 @@ export const useDragHandlers = (
         }
       }
     },
-    [dndData.columns, selectedItems, setDndData, setInvalidCol, setInvalidLayout, setSelectedItems],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dndData.columns, selectedItems],
   );
 
   return { onDragUpdate, onDragEnd };
