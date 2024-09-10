@@ -1,5 +1,9 @@
 # Drag and Drop
 
+<div align="center">
+<img src="https://github.com/user-attachments/assets/c3b84cf2-9c28-4145-9445-cfa9b729d926" alt="draganddrop">
+</div>
+
 이 프로젝트는 `Webpack` 설정을 직접 구성하고, `react-beautiful-dnd` 라이브러리를 사용하여 드래그 앤 드롭 기능을 구현한 `React` 애플리케이션입니다. 요구 사항에 따라 다양한 드래그 제약 조건과 멀티 드래그 기능을 추가하였으며, 네 개의 칼럼 간의 아이템 이동을 지원합니다. 또한, UI/UX를 고려한 직관적이고 심플한 디자인으로 설계되었습니다.
 
 ## 요구사항 구현률
